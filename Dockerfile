@@ -1,27 +1,25 @@
-# 1. Usamos la imagen oficial de Node en su versión 24 con Alpine para una imagen más ligera
-FROM node:24-alpine AS base
+# 1. Usamos la imagen oficial de Node 24 Alpine
+FROM node:24-alpine
 
-# 2. Instalamos dependencias solo cuando sea necesario
-FROM base AS deps
+# 2. Establecemos el directorio de trabajo
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
 
-# 3. Constructor del código 
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# 3. Instalamos las dependencias necesarias para Alpine
+# (algunas librerías de Node necesitan estas herramientas para compilar)
+RUN apk add --no-cache libc6-compat
+
+# 4. Copiamos los archivos de dependencias
+COPY package.json package-lock.json* ./
+
+# 5. Instalamos todas las dependencias
+RUN npm install
+
+# 6. Copiamos el resto del proyecto
+# Gracias al volumen en docker-compose, los cambios se verán en tiempo real
 COPY . .
-RUN npm run build
 
-# 4. Correr la aplicación 
-FROM base AS runner
-WORKDIR /app
-ENV NODE_ENV production
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/public ./public
-
+# 7. Exponemos el puerto de Next.js
 EXPOSE 3000
-CMD ["npm", "start"]
+
+# 8. Comando para desarrollo (permite ver cambios sin reconstruir la imagen)
+CMD ["npm", "run", "dev"]
