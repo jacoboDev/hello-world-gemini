@@ -52,11 +52,16 @@ LEVANTAR (ENCENDER):
 docker compose up
 ```
 
-DETENER:
+PAUSAR:
 Ctrl + C  
 /  
 ```
 docker compose stop
+```
+
+FINALIZAR (al final del día):
+```
+docker compose down
 ```
 
 ENTRAR DENTRO DEL CONTENEDOR:
