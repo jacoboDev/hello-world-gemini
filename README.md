@@ -59,6 +59,11 @@ Ctrl + C
 docker compose stop
 ```
 
+REANUDAR:
+```
+docker compose start
+```
+
 FINALIZAR (al final del día):
 ```
 docker compose down
