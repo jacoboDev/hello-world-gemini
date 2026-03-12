@@ -8,9 +8,6 @@ app = FastAPI()
 # 1. Función para obtener la clave de forma segura
 def get_api_key():
     key = os.getenv("GEMINI_API_KEY")
-    if not key:
-        # Intento desesperado: buscarla con otro nombre por si acaso
-        key = os.getenv("NEXT_PUBLIC_GEMINI_API_KEY") 
     return key
 
 @app.post("/analizar")
