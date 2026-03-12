@@ -40,39 +40,61 @@ export async function GET() {
     return NextResponse.json({ error: "Error en el proceso" }, { status: 500 });
   }
 }
-
+// Sustituye tus dos POST por este único bloque
 export async function POST(req: Request) {
   try {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-    const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY!);
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-
-    // 1. Procesar el archivo que llega
+    const { searchParams } = new URL(req.url);
+    const engine = searchParams.get("engine"); // Capturamos ?engine=python o ?engine=node
     const formData = await req.formData();
-    const file = formData.get("cv") as File;
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const tempPath = path.join("/tmp", file.name);
-    fs.writeFileSync(tempPath, buffer);
+    let datosIA;
 
-    // 2. Subir a Google y pedir análisis
-    const uploadResult = await fileManager.uploadFile(tempPath, { mimeType: "application/pdf", displayName: "CV" });
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-    const result = await model.generateContent([
-      { fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } },
-      { text: "Analiza este CV y devuelve un JSON con: nombre, tecnologias y resumen." },
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    if (engine === "python") {
+      // --- LÓGICA PUENTE HACIA PYTHON ---
+      const pythonRes = await fetch("http://python_app:8000/analizar", {
+        method: "POST",
+        body: formData,
+      });
+      const pythonData = await pythonRes.json();
+      if (pythonData.error) throw new Error(pythonData.error);
+      
+      // Limpiamos el texto que devuelve Python (Gemini suele poner markdown)
+      const textoLimpio = pythonData.data.replace(/```json|```/g, "").trim();
+      datosIA = JSON.parse(textoLimpio);
+    } else {
+      // --- LÓGICA NATIVA NODE ---
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+      const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY!);
+      const file = formData.get("cv") as File;
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const tempPath = path.join("/tmp", file.name);
+      
+      fs.writeFileSync(tempPath, buffer);
+      const uploadResult = await fileManager.uploadFile(tempPath, { mimeType: "application/pdf", displayName: "CV" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      
+      const result = await model.generateContent([
+        { fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } },
+        { text: "Analiza este CV y devuelve un JSON con: nombre, tecnologias y resumen." },
+      ]);
+
+      datosIA = JSON.parse(result.response.text().replace(/```json|```/g, "").trim());
+      
+      fs.unlinkSync(tempPath); // Limpiar temporal
+    }
+
+    // --- GUARDADO COMÚN EN SUPABASE ---
+    await supabase.from("cv_analizados").insert([
+      { datos: datosIA, lenguaje: engine === "python" ? "Python" : "Node.js" }
     ]);
 
-    const datosIA = JSON.parse(result.response.text().replace(/```json|```/g, "").trim());
-
-    // 3. Guardar en la NUEVA tabla (Recuerda crearla en Supabase como te dije antes)
-    await supabase.from("cv_analizados").insert([{ datos: datosIA }]);
-
-    // 4. Limpieza
-    fs.unlinkSync(tempPath);
-    await fileManager.deleteFile(uploadResult.file.name);
-
     return NextResponse.json({ data: datosIA });
-  } catch (err) {
-    return NextResponse.json({ error: "Error procesando el archivo" }, { status: 500 });
+  } catch (err: any) {
+    console.error(err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

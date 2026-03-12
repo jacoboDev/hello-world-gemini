@@ -10,3 +10,16 @@ services:
     env_file:
       - .env.local
     command: npm run dev # Usamos modo desarrollo para que ver los cambios en vivo
+
+  python_app:
+    build: ./backend_python
+    ports:
+      - "8000:8000" #  http://localhost:8000
+    volumes:
+      - ./backend_python:/app # Esto permite que si cambias el main.py, se actualice solo
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    env_file:
+      - .env.local
+    # En Python, el modo "dev" se activa con el flag --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
