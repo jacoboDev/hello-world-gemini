@@ -1,0 +1,20 @@
+# Limpiar configuraciones de Mac/Windows para evitar problemas de formato en Linux (Docker)
+# Y para mantener un formato consistente en todo el proyecto, independientemente de la configuración del editor de cada desarrollador.
+
+# ES NECESARIO TENER INSTALADA EN VSCODE LA VERSIÓN OFICIAL "EditorConfig" para VS Code
+
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+end_of_line = lf # <--- Esto fuerza a que todos usen el formato de Linux
+
+[*.py]
+indent_size = 4 # Estándar de la industria para Python
+
+[*.{yml,yaml}]
+indent_size = 2

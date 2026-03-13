@@ -2,6 +2,35 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Este proyecto es una aplicación Fullstack que utiliza **Next.js** para el frontend, **FastAPI (Python)** para el procesamiento de PDFs con la IA de Gemini, y **Supabase** para el almacenamiento de datos.
+
+Necesitas tener instalado:
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+* WSL 2: Para situar la carpeta raíz del proyecto y correr sobre kernel de Linux los contenedores de Docker
+* Configurar .env.local con las API Keys a partir del archivo dummy .example.env.local
+
+
+La aplicación estará disponible en:
+
+Frontend: http://localhost:3000
+
+API Python: http://localhost:8000
+
+Documentación API (Swagger): http://localhost:8000/docs
+
+
+# Estructura del proyecto
+/src - Aplicación Next.js (Frontend y API Gateway)
+
+/backend_python - Microservicio de Python para procesamiento de IA
+
+docker-compose.yml - Orquestación de contenedores
+
+
+--------------------------------------------------------------------------------------------------
+
+
+
 First, run the development server:
 
 ```bash
@@ -39,40 +68,94 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## TECHNIC ISSUES
 
-DOCKER:
+# General
+ES NECESARIO TENER INSTALADA LA VERSIÓN OFICIAL "EditorConfig" PARA VSCode / Cursor:
+
+Para limpiar configuraciones de Mac/Windows para evitar problemas de formato en Linux (Docker),
+y para mantener un formato consistente en todo el proyecto, independientemente de la configuración del editor de cada desarrollador.
 
 
-COMPILAR:
-```
-docker compose up --build
-```
 
-LEVANTAR (ENCENDER):
-```
-docker compose up
-```
+# 🐳 Docker
 
-PAUSAR:
-Ctrl + C  
-/  
-```
-docker compose stop
-```
+En este proyecto, utilizamos Docker para estandarizar el entorno de desarrollo. A continuación, se detallan los conceptos clave y los comandos principales.
 
-REANUDAR:
-```
-docker compose start
-```
+## Conceptos Básicos
 
-FINALIZAR (al final del día):
-```
-docker compose down
-```
+* **Imagen:** Es de solo lectura, no cambia y contiene todo lo necesario para que el programa funcione (sistema operativo, librerías, código). Si se borra y vuelve a crear, vuelve a empezar de cero; no guarda estado.
+* **Volumen:** Memoria donde se guardan los datos que cambian. Es un espacio de lectura/escritura externo a la imagen. Permite que los datos "sobrevivan" aunque se apague el contenedor. Hace de espejo con nuestra carpeta raíz mediante `.:/app` (todo lo de la raíz . se copia en un directorio /app dentro del contenedor).
+* **Contenedor:** Es una instancia de la imagen "encendida" que consume RAM y CPU.
 
-ENTRAR DENTRO DEL CONTENEDOR:
-```
-docker compose exec app bash
-```
+---
 
-VER LA APP DESPUÉS DE LEVANTAR:
-http://localhost:3000
+## Comandos de Gestión
+
+### 🛠 Compilación y Encendido
+| Acción | Comando |
+| :--- | :--- |
+| **Compilar** | `docker compose up --build` |
+| **Levantar (Encender)** | `docker compose up` |
+
+### ⏸ Pausar y Reanudar
+* **Pausar (pausas cortas):** `Ctrl + C` o `docker compose stop`
+* **Reanudar (después del stop):** `docker compose start`
+
+### ⏹ Finalizar y Limpiar
+* **Finalizar:** (Al terminar el día o una funcionalidad). Elimina contenedores y redes, pero mantiene volúmenes e imágenes.
+    ```bash
+    docker compose down
+    ```
+* **Borrar reconstrucción completa:** (Para cambiar versiones de Node o Dockerfile). Borra contenedores y volúmenes anónimos para instalar desde cero.
+    ```bash
+    docker compose down -v
+    ```
+
+---
+
+## Interacción con el Contenedor
+
+* **Entrar al contenedor:**
+    ```bash
+    docker compose exec app bash
+    ```
+* **Ver logs en tiempo real:**
+    ```bash
+    docker compose logs -f
+    ```
+* **Instalar librerías "en caliente" (Node):**
+    ```bash
+    docker compose exec app npm install <paquete>
+    ```
+* **Instalar librerías "en caliente" (Python):**
+    ```bash
+    docker compose exec python_app pip install <paquete>
+    ```
+* **Revisar archivos para .dockerignore:**
+    ```bash
+    docker compose exec python_app ls -a /app
+    ```
+
+**Acceso a la App:** [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 🧹 Mantenimiento y Limpieza de Caché
+
+Es recomendable limpiar imágenes huérfanas que se acumulan con cada `up --build`.
+
+| Propósito | Comando |
+| :--- | :--- |
+| **Ver espacio total ocupado** | `docker system df` |
+| **Ver imágenes huérfanas** | `docker images -f "dangling=true"` |
+| **Ver volúmenes no usados** | `docker volume ls -qf dangling=true` |
+| **Borrar todo lo no usado menos volúmenes** | `docker system prune` |
+| Limpieza segura. Borra imágenes huérfanas (sin nombre), |
+| contenedores detenidos y redes que no se usan. |
+| No toca volúmenes. |
+| **Borrar TODO (incluye volúmenes)** | `docker system prune -a --volumes` |
+> **Cuidado:** Limpieza total. Borra todas las imágenes no utilizadas (tengan nombre o no) y todos los volúmenes, siempre que no estén asociados a un contenedor encendido.
+
+
+
+
+

@@ -4,9 +4,9 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/.next
+      - .:/app # Esto genera un "espejo" del directorio raíz local al directorio /app raíz dentro del contenedor en tiempo real
+      - /app/node_modules # Volumen anónimo (respeta la carpeta creada en el build pero no la copia) porque pertenecen al Sistema Operativo local
+      - /app/.next        # Volumen anónimo
     env_file:
       - .env.local
     command: npm run dev # Usamos modo desarrollo para que ver los cambios en vivo
@@ -16,9 +16,7 @@ services:
     ports:
       - "8000:8000" #  http://localhost:8000
     volumes:
-      - ./backend_python:/app # Esto permite que si cambias el main.py, se actualice solo
-    environment:
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - ./backend_python:/app # Esto permite que si cambias el main.py, se actualice solo     
     env_file:
       - .env.local
     # En Python, el modo "dev" se activa con el flag --reload

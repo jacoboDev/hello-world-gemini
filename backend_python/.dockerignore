@@ -1,0 +1,79 @@
+# 1. Byte-compiled / optimizados
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 2. Entornos virtuales (MUY importante si creas uno en tu PC)
+venv/
+env/
+.venv/
+bin/
+lib/
+develop-eggs/
+dist/
+eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+
+# 3. Instalaciones de librerías locales
+.installed.cfg
+*.egg
+
+# 4. Logs y bases de datos temporales
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# 5. Tests y Cobertura
+.topojson
+.pytest_cache/
+.nosepy
+nosetests.xml
+coverage.xml
+*.cover
+.stack-work/
+
+# 6. Archivos de sistema y variables locales
+.DS_Store
+.env
+.env.local
+.vscode/
+.idea/
+
+
+
+# EXCLUSIVO PARA macOS: -----------------------------------------------------------
+
+# macOS archivos de sistema
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Archivos de basura de carpetas
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directorios de metadatos de red/USB (por si se trabaja en discos externos)
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+apdisk
+
+# ----------------------------------------------------------------------------------
+
+
+
+.ipynb_checkpoints/    # Si usamos Jupyter Notebooks para probar la IA
+.pytest_cache/         # Si hacemos tests automáticos
