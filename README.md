@@ -4,10 +4,26 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 Este proyecto es una aplicación Fullstack que utiliza **Next.js** para el frontend, **FastAPI (Python)** para el procesamiento de PDFs con la IA de Gemini, y **Supabase** para el almacenamiento de datos.
 
+
+
 Necesitas tener instalado:
-* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-* WSL 2: Para situar la carpeta raíz del proyecto y correr sobre kernel de Linux los contenedores de Docker
+
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/):
+Desde Windows o macOS (no aplica a Linux)
+
+* Docker Engine y plugin de Docker Compose (V2):
+(Únicamente en Linux). Instrucciones más abajo en sección de Docker.
+
+* WSL 2:
+(Únicamente en Windows) Para situar la carpeta raíz del proyecto y correr sobre kernel de Linux los contenedores de Docker
 * Configurar .env.local con las API Keys a partir del archivo dummy .example.env.local
+
+* Extensión "EditorConfig" para VSCode / Cursor:
+
+Para limpiar configuraciones de Mac/Windows y evitar problemas de formato en Linux (Docker),
+y para mantener un formato consistente en todo el proyecto, independientemente de la configuración del editor de cada desarrollador.
+
+
 
 
 La aplicación estará disponible en:
@@ -17,6 +33,7 @@ Frontend: http://localhost:3000
 API Python: http://localhost:8000
 
 Documentación API (Swagger): http://localhost:8000/docs
+
 
 
 # Estructura del proyecto
@@ -64,15 +81,6 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-
-
-## TECHNIC ISSUES
-
-# General
-ES NECESARIO TENER INSTALADA LA VERSIÓN OFICIAL "EditorConfig" PARA VSCode / Cursor:
-
-Para limpiar configuraciones de Mac/Windows para evitar problemas de formato en Linux (Docker),
-y para mantener un formato consistente en todo el proyecto, independientemente de la configuración del editor de cada desarrollador.
 
 
 
@@ -157,5 +165,15 @@ Es recomendable limpiar imágenes huérfanas que se acumulan con cada `up --buil
 
 
 
+# Instalación de Docker en Linux
+Descargar y ejecutar el instalador oficial
+```
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+```
 
-
+Configurar permisos para no usar 'sudo' en los comandos del proyecto
+```
+sudo usermod -aG docker $USER
+```
+> **Importante**: Reinicia tu sesión (log out/log in) para aplicar los permisos de usuario.
