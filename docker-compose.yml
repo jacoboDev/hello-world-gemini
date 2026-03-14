@@ -16,7 +16,8 @@ services:
     ports:
       - "8000:8000" #  http://localhost:8000
     volumes:
-      - ./backend_python:/app # Esto permite que si cambias el main.py, se actualice solo     
+      - ./backend_python:/app # Esto permite que si cambias el main.py, se actualice solo
+      - /app/__pycache__ # Volumen anónimo para evitar conflictos con archivos compilados de Python
     env_file:
       - .env.local
     # En Python, el modo "dev" se activa con el flag --reload

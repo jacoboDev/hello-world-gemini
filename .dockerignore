@@ -3,6 +3,8 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
 .pnpm-debug.log*
 
 # 2. Carpetas de compilación y salida
@@ -19,12 +21,7 @@ venv/
 __pycache__/
 
 # 4. Variables de entorno (Seguridad)
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env*.local
+.env*
 
 # 5. Logs y Debugging
 logs
@@ -40,8 +37,7 @@ logs
 .git/
 .gitignore
 README.md
-Dockerfile
-docker-compose.yml
+Thumbs.db
 
 
 # EXCLUSIVO PARA macOS: -----------------------------------------------------------
@@ -80,6 +76,7 @@ apdisk
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
 # ----------------------------------------------------------------------------------
 
@@ -91,7 +88,6 @@ supabase/storage/
 
 # Ghost Reload de Next.js
 .cache/
-.pnpm-store/
 
 
 .vercel/               # Si alguna vez desplegamos en Vercel

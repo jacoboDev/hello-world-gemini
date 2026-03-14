@@ -23,7 +23,11 @@ Desde Windows o macOS (no aplica a Linux)
 Para limpiar configuraciones de Mac/Windows y evitar problemas de formato en Linux (Docker),
 y para mantener un formato consistente en todo el proyecto, independientemente de la configuración del editor de cada desarrollador.
 
+* Node.js (Versión 24 o superior).
 
+* pnpm `npm install -g pnpm` para que el VS Code entienda las librerías y autocomplete.
+
+* NO hacer `npm instal` ni `npmn install` en local. Cualquier librería nueva se instala directamente DENTRO del contenedor para ser acorde a Linux y generar un lockfile (pnpm-lock.yaml) preciso. Instrucciones de instalación en apartado de Docker. El proyecto nunca debe tener un package-lock.json ya que este es generado por npm, y debe ser borrado.
 
 
 La aplicación estará disponible en:
@@ -55,7 +59,7 @@ npm run dev
 # or
 yarn dev
 # or
-pnpm dev
+pnpm dev  # Recomendado para gestión eficiente, aislada y estricta de dependencias
 # or
 bun dev
 ```
@@ -132,12 +136,22 @@ En este proyecto, utilizamos Docker para estandarizar el entorno de desarrollo. 
     ```
 * **Instalar librerías "en caliente" (Node):**
     ```bash
-    docker compose exec app npm install <paquete>
+    docker compose exec app pnpm add <paquete>
+    ```
+* **Eliminar librería (Node):**
+    ```
+    docker compose exec app pnpm remove <nombre-paquete>
     ```
 * **Instalar librerías "en caliente" (Python):**
     ```bash
     docker compose exec python_app pip install <paquete>
     ```
+    ```
+    docker compose exec python_app sh -c "pip freeze > requirements.txt"
+    ```
+* **Eliminar librería (Python):**
+    ```
+    docker compose exec python_app pnpm remove <nombre-paquete>
 * **Revisar archivos para .dockerignore:**
     ```bash
     docker compose exec python_app ls -a /app
@@ -165,7 +179,7 @@ Es recomendable limpiar imágenes huérfanas que se acumulan con cada `up --buil
 
 
 
-# Instalación de Docker en Linux
+## Instalación de Docker en Linux
 Descargar y ejecutar el instalador oficial
 ```
 curl -fsSL https://get.docker.com -o get-docker.sh
@@ -177,3 +191,25 @@ Configurar permisos para no usar 'sudo' en los comandos del proyecto
 sudo usermod -aG docker $USER
 ```
 > **Importante**: Reinicia tu sesión (log out/log in) para aplicar los permisos de usuario.
+
+
+
+# PYTHON BACKEND
+
+Hacer `pip freeze > requirements.txt` dentro del contenedor tras instalar librerías nuevas.
+
+Luego, en local, **con venv activado** hacer `pip install -r requirements.txt` para actualizar dichas librerías.
+
+Instalar librerías en entorno virtual `python -m venv venv` local, únicamente para que VS Code reconozca librerías.
+
+
+# pnpm requirements
+- Delete package-lock.json
+- Delete yarn.lock
+- Delete node_modules if you must restart after an accidental npm
+- There must be a pnpm-lock.yaml lockfile
+- Always install libraries inside docker container
+```
+docker compose exec app pnpm add <library>
+```
+- Actualizar en local a partir del pnpm-lock.yaml actualizado: `pnpm install`

@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# pnpm settings
+package-lock.json
+.pnpm-store/
+
+# Python
+__pycache__/
+*.pyc
+
+# Docker y logs
+*.log
+.pnpm-debug.log
