@@ -27,7 +27,7 @@ y para mantener un formato consistente en todo el proyecto, independientemente d
 
 * pnpm `npm install -g pnpm` para que el VS Code entienda las librerías y autocomplete.
 
-* NO hacer `npm instal` ni `npmn install` en local. Cualquier librería nueva se instala directamente DENTRO del contenedor para ser acorde a Linux y generar un lockfile (pnpm-lock.yaml) preciso. Instrucciones de instalación en apartado de Docker. El proyecto nunca debe tener un package-lock.json ya que este es generado por npm, y debe ser borrado.
+* NO hacer `npm install <paquete>` ni `pnpm add <paquete>` en local. Cualquier librería nueva se instala directamente DENTRO del contenedor para ser acorde a Linux y generar un lockfile (pnpm-lock.yaml) preciso. Instrucciones de instalación en apartado de Docker. El proyecto nunca debe tener un package-lock.json ya que este es generado por npm, y debe ser borrado.
 
 
 La aplicación estará disponible en:
@@ -157,7 +157,7 @@ En este proyecto, utilizamos Docker para estandarizar el entorno de desarrollo. 
     docker compose exec python_app ls -a /app
     ```
 
-**Acceso a la App:** [http://localhost:3000](http://localhost:3000)
+**Acceso a la App:** http://localhost:3000
 
 ---
 
