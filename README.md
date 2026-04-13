@@ -213,3 +213,11 @@ Instalar librerías en entorno virtual `python -m venv venv` local, únicamente 
 docker compose exec app pnpm add <library>
 ```
 - Actualizar en local a partir del pnpm-lock.yaml actualizado: `pnpm install`
+
+### Solución generación `npm` accidental
+- Eliminar package-lock.json (y otros) `rm package-lock.json yarn.lock bun.lockb`
+- Eliminar node_modules `rm -rf node_modules`
+- Ejecutar `pnpm install`
+- Realizar un `make clean` y un `make build`
+
+- Prevención: añadir en package.json, dentro de scripts, línea: `"preinstall": "npx only-allow pnpm"`
