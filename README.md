@@ -220,6 +220,9 @@ docker compose exec app pnpm add <library>
 `source .venv/bin/activate`
 `python --version`
 
+## Salir del .venv
+`deactivate`
+
 ## Guardar instalaciones dentro del .venv
 `pip freeze > requirements.txt`
 
