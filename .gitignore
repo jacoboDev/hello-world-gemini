@@ -51,3 +51,7 @@ __pycache__/
 # Docker y logs
 *.log
 .pnpm-debug.log
+
+
+# environments
+.venv*/

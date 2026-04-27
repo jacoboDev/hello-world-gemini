@@ -213,3 +213,32 @@ Instalar librerías en entorno virtual `python -m venv venv` local, únicamente 
 docker compose exec app pnpm add <library>
 ```
 - Actualizar en local a partir del pnpm-lock.yaml actualizado: `pnpm install`
+
+
+# Crear .venv y usar dentro comando python en lugar de python3.11
+`python3.11 -m venv .venv`
+`source .venv/bin/activate`
+`python --version`
+
+## Guardar instalaciones dentro del .venv
+`pip freeze > requirements.txt`
+
+## Instalar desde requirements.txt
+`pip install -r requirements.txt`
+
+## Mostrar .venv preparados
+Se ve el directorio en la estructura de carpetas.
+Para saber en cuál estas actualmente o en ninguno:
+`which python`
+/usr/bin/python3, no hay ninguno activo.
+/home/{user}/{proyecto}/.venv_{version}/bin/python, ese es el que está activo.
+
+
+# Ejecutar contador de tokens para .docx
+1. Activar .venv
+`python count_tokens.py`
+
+
+# Antigravity
+Archivo project_context.md para trabajar con el contexto de todo el proyecto y la estructura de carpetas ya recogido.
+Hay que indicarle que mire el markdown para contextualizarlo.

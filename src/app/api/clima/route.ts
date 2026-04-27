@@ -25,10 +25,10 @@ export async function GET() {
     const { data, error } = await supabase
       .from("consultas_clima")
       .insert([
-        { 
-          ciudad: "Barcelona", 
+        {
+          ciudad: "Barcelona",
           respuesta_generada: respuestaIA,
-          fecha: new Date().toISOString() 
+          fecha: new Date().toISOString()
         },
       ]);
 
@@ -40,6 +40,26 @@ export async function GET() {
     return NextResponse.json({ error: "Error en el proceso" }, { status: 500 });
   }
 }
+
+// Función RETRY cuando Gemini falla por tráfico
+// Función para reintentar si Google está ocupado
+async function generarConReintento(model, contenido, intentos = 2) {
+  for (let i = 0; i <= intentos; i++) {
+    try {
+      return await model.generateContent(contenido);
+    } catch (err) {
+      // Si el error es 503 (Servicio ocupado) y nos quedan intentos...
+      if (err.status === 503 && i < intentos) {
+        console.log(`Google ocupado, reintentando en ${i + 1}s...`);
+        await new Promise(resolve => setTimeout(resolve, 1500)); // Espera 1.5 segundos
+        continue;
+      }
+      throw err; // Si es otro error o no hay más intentos, lo lanza al catch principal
+    }
+  }
+}
+
+
 // Sustituye tus dos POST por este único bloque
 export async function POST(req: Request) {
   try {
@@ -61,7 +81,7 @@ export async function POST(req: Request) {
       });
       const pythonData = await pythonRes.json();
       if (pythonData.error) throw new Error(pythonData.error);
-      
+
       // Limpiamos el texto que devuelve Python (Gemini suele poner markdown)
       const textoLimpio = pythonData.data.replace(/```json|```/g, "").trim();
       datosIA = JSON.parse(textoLimpio);
@@ -72,18 +92,18 @@ export async function POST(req: Request) {
       const file = formData.get("cv") as File;
       const buffer = Buffer.from(await file.arrayBuffer());
       const tempPath = path.join("/tmp", file.name);
-      
+
       fs.writeFileSync(tempPath, buffer);
       const uploadResult = await fileManager.uploadFile(tempPath, { mimeType: "application/pdf", displayName: "CV" });
       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-      
+
       const result = await model.generateContent([
         { fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } },
         { text: "Analiza este CV y devuelve un JSON con: nombre, tecnologias y resumen." },
       ]);
 
       datosIA = JSON.parse(result.response.text().replace(/```json|```/g, "").trim());
-      
+
       fs.unlinkSync(tempPath); // Limpiar temporal
     }
 
