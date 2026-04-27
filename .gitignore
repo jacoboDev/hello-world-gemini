@@ -55,3 +55,7 @@ __pycache__/
 
 # environments
 .venv*/
+
+# PRIVATE documents
+docs/*
+!docs\Documento_example.docx
