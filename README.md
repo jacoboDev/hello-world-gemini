@@ -214,7 +214,6 @@ docker compose exec app pnpm add <library>
 ```
 - Actualizar en local a partir del pnpm-lock.yaml actualizado: `pnpm install`
 
-<<<<<<< HEAD
 
 # Crear .venv y usar dentro comando python en lugar de python3.11
 `python3.11 -m venv .venv`
@@ -246,7 +245,6 @@ Para saber en cuál estas actualmente o en ninguno:
 # Antigravity
 Archivo project_context.md para trabajar con el contexto de todo el proyecto y la estructura de carpetas ya recogido.
 Hay que indicarle que mire el markdown para contextualizarlo.
-=======
 ### Solución generación `npm` accidental
 1- Eliminar package-lock.json (y otros) `rm package-lock.json yarn.lock bun.lockb`
 
@@ -257,4 +255,3 @@ Hay que indicarle que mire el markdown para contextualizarlo.
 4- Ejecutar `make build`
 
 - Prevención: añadir en package.json, dentro de scripts, línea: `"preinstall": "npx only-allow pnpm"`
->>>>>>> refs/remotes/origin/main
