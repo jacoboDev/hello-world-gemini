@@ -58,4 +58,4 @@ __pycache__/
 
 # PRIVATE documents
 docs/*
-!docs\Documento_example.docx
+!docs/Documento_example.docx
