@@ -27,7 +27,7 @@ y para mantener un formato consistente en todo el proyecto, independientemente d
 
 * pnpm `npm install -g pnpm` para que el VS Code entienda las librerías y autocomplete.
 
-* NO hacer `npm instal` ni `npmn install` en local. Cualquier librería nueva se instala directamente DENTRO del contenedor para ser acorde a Linux y generar un lockfile (pnpm-lock.yaml) preciso. Instrucciones de instalación en apartado de Docker. El proyecto nunca debe tener un package-lock.json ya que este es generado por npm, y debe ser borrado.
+* NO hacer `npm install <paquete>` ni `pnpm add <paquete>` en local. Cualquier librería nueva se instala directamente DENTRO del contenedor para ser acorde a Linux y generar un lockfile (pnpm-lock.yaml) preciso. Instrucciones de instalación en apartado de Docker. El proyecto nunca debe tener un package-lock.json ya que este es generado por npm, y debe ser borrado.
 
 
 La aplicación estará disponible en:
@@ -157,7 +157,7 @@ En este proyecto, utilizamos Docker para estandarizar el entorno de desarrollo. 
     docker compose exec python_app ls -a /app
     ```
 
-**Acceso a la App:** [http://localhost:3000](http://localhost:3000)
+**Acceso a la App:** http://localhost:3000
 
 ---
 
@@ -214,6 +214,7 @@ docker compose exec app pnpm add <library>
 ```
 - Actualizar en local a partir del pnpm-lock.yaml actualizado: `pnpm install`
 
+<<<<<<< HEAD
 
 # Crear .venv y usar dentro comando python en lugar de python3.11
 `python3.11 -m venv .venv`
@@ -245,3 +246,15 @@ Para saber en cuál estas actualmente o en ninguno:
 # Antigravity
 Archivo project_context.md para trabajar con el contexto de todo el proyecto y la estructura de carpetas ya recogido.
 Hay que indicarle que mire el markdown para contextualizarlo.
+=======
+### Solución generación `npm` accidental
+1- Eliminar package-lock.json (y otros) `rm package-lock.json yarn.lock bun.lockb`
+
+2- Ejecutar `make clean`
+
+3- Ejecutar `pnpm install`
+
+4- Ejecutar `make build`
+
+- Prevención: añadir en package.json, dentro de scripts, línea: `"preinstall": "npx only-allow pnpm"`
+>>>>>>> refs/remotes/origin/main
