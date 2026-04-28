@@ -18,7 +18,7 @@ def get_docx_text(path):
     return "\n".join([para.text for para in doc.paragraphs])
 
 # Usamos la ruta real del documento
-doc_path = r"docs/Diccionario de Competencias Digitales 3 con IA + ÁREA IA Generativa y Agéntica.docx"
+doc_path = r"docs/content/Diccionario de Competencias Digitales 3 con IA + ÁREA IA Generativa y Agéntica.docx"
 print(f"Leyendo documento: {doc_path}")
 texto_digcomp = get_docx_text(doc_path)
 

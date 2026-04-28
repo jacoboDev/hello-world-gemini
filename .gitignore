@@ -57,5 +57,12 @@ __pycache__/
 .venv*/
 
 # PRIVATE documents
-docs/*
-!docs/Documento_example.docx
+*.docx
+*.doc
+*Identifier
+
+docs/content/*
+!docs/content/.gitkeep
+
+
+

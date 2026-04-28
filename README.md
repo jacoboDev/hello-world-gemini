@@ -215,7 +215,7 @@ docker compose exec app pnpm add <library>
 - Actualizar en local a partir del pnpm-lock.yaml actualizado: `pnpm install`
 
 
-# Crear .venv y usar dentro comando python en lugar de python3.11
+# Crear .venv (o nombre de tu environment) y usar dentro comando python en lugar de python3.11
 `python3.11 -m venv .venv`
 `source .venv/bin/activate`
 `python --version`
@@ -232,7 +232,7 @@ docker compose exec app pnpm add <library>
 ## Mostrar .venv preparados
 Se ve el directorio en la estructura de carpetas.
 Para saber en cuál estas actualmente o en ninguno:
-`which python`
+`which python` o `ls -d .*venv*/` o mirar en estructura de carpetas
 /usr/bin/python3, no hay ninguno activo.
 /home/{user}/{proyecto}/.venv_{version}/bin/python, ese es el que está activo.
 
@@ -255,3 +255,9 @@ Hay que indicarle que mire el markdown para contextualizarlo.
 4- Ejecutar `make build`
 
 - Prevención: añadir en package.json, dentro de scripts, línea: `"preinstall": "npx only-allow pnpm"`
+
+
+## Count tokens
+1. Abrir .venv disponible `which python` o `source .venv_tokens/bin/activate`
+2. Ejecutar `python count_tokens.py`
+Asegurar que el archivo .docx está en la carpeta `docs/content/`
