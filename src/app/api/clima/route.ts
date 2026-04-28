@@ -17,7 +17,7 @@ export async function GET() {
     // 2. Pedir a Gemini el tiempo en Barcelona
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const prompt = "Dime el clima actual en Barcelona de forma muy breve.";
-    const result = await model.generateContent(prompt);
+    const result = await generarConReintento(model, prompt);
     const response = await result.response;
     const respuestaIA = response.text();
 
@@ -41,23 +41,43 @@ export async function GET() {
   }
 }
 
-// Función RETRY cuando Gemini falla por tráfico
+// Función RETRY con EXPONENTIAL BACKOFF (cada vez esperas el doble de largas) cuando Gemini falla por tráfico
+// con CAP de 8 segundos (tiempo máximo en el Exponential)
 // Función para reintentar si Google está ocupado
-async function generarConReintento(model, contenido, intentos = 2) {
-  for (let i = 0; i <= intentos; i++) {
+async function generarConReintento(model, contenido, maxIntentos = 6) {
+  let espera = 2000; // Empezamos en 2 segundos
+
+  for (let i = 0; i < maxIntentos; i++) {
     try {
       return await model.generateContent(contenido);
     } catch (err) {
-      // Si el error es 503 (Servicio ocupado) y nos quedan intentos...
-      if (err.status === 503 && i < intentos) {
-        console.log(`Google ocupado, reintentando en ${i + 1}s...`);
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Espera 1.5 segundos
+      // Si es error de saturación y NO es el último intento...
+      if ((err.status === 503 || err.status === 429) && i < maxIntentos - 1) {
+
+        // El "jitter" añade entre 0 y 1 segundo al azar
+        const jitter = Math.random() * 1000;
+        const tiempoTotal = espera + jitter;
+
+        // Ponemos Math.floor para que el log nos diga el número redondo
+        console.log(`Intento ${i + 1} fallido. Reintentando en ${Math.floor(tiempoTotal / 1000)} seg...`);
+
+        await new Promise(resolve => setTimeout(resolve, tiempoTotal));
+
+        // Tiempo máximo de espera en milisegundos (límite para el Exponential Backoff)
+        if (espera < 8000) {
+          espera *= 2;
+        }
+
         continue;
       }
-      throw err; // Si es otro error o no hay más intentos, lo lanza al catch principal
+      // Si el error es otra cosa (ej: clave API mal), no reintentes, falla ya.
+      throw err;
     }
   }
 }
+
+
+
 
 
 // Sustituye tus dos POST por este único bloque
@@ -97,7 +117,7 @@ export async function POST(req: Request) {
       const uploadResult = await fileManager.uploadFile(tempPath, { mimeType: "application/pdf", displayName: "CV" });
       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-      const result = await model.generateContent([
+      const result = await generarConReintento(model, [
         { fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } },
         { text: "Analiza este CV y devuelve un JSON con: nombre, tecnologias y resumen." },
       ]);
